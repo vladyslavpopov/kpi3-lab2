@@ -7,7 +7,7 @@ import (
   "os"
   "strings"
 
-  lab2 "github.com/roman-mazur/architecture-lab-2"
+  lab2 "github.com/vladyslavpopov/kpi3-lab2"
 )
 
 var (
