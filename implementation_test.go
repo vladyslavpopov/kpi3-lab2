@@ -1,23 +1,36 @@
 package lab2
 
 import (
-	"fmt"
-	"testing"
+  "fmt"
+  "testing"
 
-	"github.com/stretchr/testify/assert"
+  "github.com/stretchr/testify/assert"
 )
 
-func TestPrefixToPostfix(t *testing.T) {
-	res, err := PrefixToPostfix("+ 5 * - 4 2 3")
-	if assert.Nil(t, err) {
-		assert.Equal(t, "4 2 - 3 * 5 +", res)
-	}
+func TestPrefixToLisp(t *testing.T) {
+  res, err := PrefixToLisp("+ * 2 3 4")
+  if assert.Nil(t, err) {
+    assert.Equal(t, "(+ (* 2 3) 4)", res)
+  }
 }
 
-func ExamplePrefixToPostfix() {
-	res, _ := PrefixToPostfix("+ 2 2")
-	fmt.Println(res)
+func TestPrefixToLispMoretOperands(t *testing.T) {
+  res, err := PrefixToLisp("* + 2 3 - 8 4 ^ 5 2 / 10 5")
+  if assert.Nil(t, err) {
+    assert.Equal(t, "(* (+ 2 3) (- 8 4) (pow 5 2) (/ 10 5))", res)
+  }
+}
 
-	// Output:
-	// 2 2 +
+func TestInvalidInput(t *testing.T) {
+  _, err := PrefixToLisp("")
+  assert.NotNil(t, err)
+
+  _, err = PrefixToLisp("+ 5 *")
+  assert.NotNil(t, err)
+}
+
+func ExamplePrefixToLisp() {
+  res, _ := PrefixToLisp("+ * 2 3 - 8 4")
+  fmt.Print(res)
+  // Output: (+ (* 2 3) (- 8 4))
 }
