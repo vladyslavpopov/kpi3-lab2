@@ -1,27 +1,62 @@
 package main
 
 import (
-	"flag"
-	"fmt"
-	lab2 "github.com/roman-mazur/architecture-lab-2"
+  "flag"
+  "fmt"
+  "io"
+  "os"
+  "strings"
+
+  lab2 "github.com/roman-mazur/architecture-lab-2"
 )
 
 var (
-	inputExpression = flag.String("e", "", "Expression to compute")
-	// TODO: Add other flags support for input and output configuration.
+  flagExpr = flag.String("e", "", "Expression to compute")
+  flagFile = flag.String("f", "", "File containing expression")
+  flagOut  = flag.String("o", "", "Output file for result")
 )
 
 func main() {
-	flag.Parse()
+  flag.Parse()
 
-	// TODO: Change this to accept input from the command line arguments as described in the task and
-	//       output the results using the ComputeHandler instance.
-	//       handler := &lab2.ComputeHandler{
-	//           Input: {construct io.Reader according the command line parameters},
-	//           Output: {construct io.Writer according the command line parameters},
-	//       }
-	//       err := handler.Compute()
+  if (*flagExpr == "" && *flagFile == "") || (*flagExpr != "" && *flagFile != "") {
+    fmt.Fprintln(os.Stderr, "Specify either -e or -f, but not both.")
+    os.Exit(1)
+  }
 
-	res, _ := lab2.PrefixToPostfix("+ 2 2")
-	fmt.Println(res)
+  var inputReader io.Reader
+  if *flagExpr != "" {
+    inputReader = strings.NewReader(*flagExpr)
+  } else {
+    f, err := os.Open(*flagFile)
+    if err != nil {
+      fmt.Fprintln(os.Stderr, "Error opening input file:", err)
+      os.Exit(1)
+    }
+    defer f.Close()
+    inputReader = f
+  }
+
+  var outputWriter io.Writer
+  if *flagOut != "" {
+    f, err := os.Create(*flagOut)
+    if err != nil {
+      fmt.Fprintln(os.Stderr, "Error creating output file:", err)
+      os.Exit(1)
+    }
+    defer f.Close()
+    outputWriter = f
+  } else {
+    outputWriter = os.Stdout
+  }
+
+  handler := &lab2.ComputeHandler{
+    Input:  inputReader,
+    Output: outputWriter,
+  }
+
+  if err := handler.Compute(); err != nil {
+    fmt.Fprintln(os.Stderr, "Error computing expression:", err)
+    os.Exit(1)
+  }
 }
