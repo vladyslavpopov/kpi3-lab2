@@ -4,6 +4,8 @@
 
 Варіант - 9
 
+Виконали: Попов Владислав та Бондар Ярослав
+
 ## Приклади збірок
 
 ![Build Status](https://github.com/vladyslavpopov/kpi3-lab2/actions/workflows/build.yml/badge.svg)
